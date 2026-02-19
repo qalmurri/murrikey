@@ -21,6 +21,22 @@ ScreenkeyOverlay::ScreenkeyOverlay() {
     anim = new QPropertyAnimation(eff, "opacity");
     anim->setDuration(500);
 
+    hideTimer = new QTimer(this);
+    hideTimer->setSingleShot(true);
+    
+    connect(hideTimer, &QTimer::timeout, this, [this]() {
+        anim->setStartValue(1.0);
+        anim->setEndValue(0.0);
+        anim->start();
+    });
+    
+    connect(anim, &QPropertyAnimation::finished, this, [this, eff]() {
+        if (eff->opacity() == 0.0) {
+             buffer = ""; 
+             label->setText("");
+        }
+    });
+
     refresh();
 }
 
@@ -41,27 +57,27 @@ QString ScreenkeyOverlay::formatKey(QString key) {
 }
 
 void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool alt) {
+    // 1. Hentikan timer dan animasi yang sedang berjalan (jika ada)
+    hideTimer->stop();
+    anim->stop();
+
+    // 2. Tampilkan kembali label (reset opacity ke 1.0)
+    label->graphicsEffect()->setProperty("opacity", 1.0);
+
+    // 3. Logika pemrosesan tombol (kode lama kamu)
     if (name == "BackSpace") {
         if (!buffer.isEmpty()) buffer.chop(1);
     } else {
         QString fKey = formatKey(name);
-        
-        // Perbaikan di sini: Tambahkan QString() di awal rangkaian
-        QString full = QString(ctrl ? "Ctrl+" : "") + 
-                       (alt ? "Alt+" : "") + 
-                       ((shift && fKey.length() > 1) ? "Shift+" : "") + 
-                       fKey;
-
+        QString full = QString(ctrl ? "Ctrl+" : "") + (alt ? "Alt+" : "") + 
+                       ((shift && fKey.length() > 1) ? "Shift+" : "") + fKey;
         if (ctrl || alt || fKey.length() > 1) buffer += " [" + full + "] ";
         else buffer += fKey;
     }
 
     if (buffer.length() > 30) buffer = buffer.right(30);
     label->setText(buffer);
-    label->graphicsEffect()->setProperty("opacity", 1.0);
-    
-    QTimer::singleShot(3000, this, [this]() {
-        anim->setStartValue(1.0); anim->setEndValue(0.0); anim->start();
-        buffer = ""; 
-    });
+
+    // 4. Jalankan timer baru (3 detik dari ketikan TERAKHIR)
+    hideTimer->start(3000); 
 }

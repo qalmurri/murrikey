@@ -15,6 +15,7 @@ public slots:
     void handleKeyPress(QString name, bool ctrl, bool shift, bool alt);
 
 private:
+    QTimer* hideTimer;
     QLabel* label;
     QString buffer;
     QPropertyAnimation* anim;
