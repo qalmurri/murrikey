@@ -10,7 +10,6 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
-
     ScreenkeyOverlay overlay;
     PreferencesWindow prefs;
     InputManager input;
