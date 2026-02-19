@@ -1,15 +1,30 @@
-cmake_minimum_required(VERSION 3.10)
-project(MurriKey)
+cmake_minimum_required(VERSION 3.16)
+project(murrikey)
 
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_AUTOMOC ON) # Penting untuk Qt
+set(CMAKE_AUTOMOC ON) # Ini wajib tetap ON
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Gui)
 find_package(X11 REQUIRED)
 
-add_executable(murrikey main.cpp)
+include_directories(include)
 
-target_link_libraries(murrikey PRIVATE 
-    Qt6::Widgets 
-    ${X11_LIBRARIES}
+# Masukkan file .h ke sini agar AUTOMOC bisa memindainya!
+set(HEADERS
+    include/config.h
+    include/input_manager.h
+    include/overlay.h
+    include/preferences.h
 )
+
+set(SOURCES
+    src/main.cpp
+    src/config.cpp
+    src/input_manager.cpp
+    src/overlay.cpp
+    src/preferences.cpp
+)
+
+# Tambahkan HEADERS ke add_executable
+add_executable(murrikey ${SOURCES} ${HEADERS})
+target_link_libraries(murrikey Qt6::Widgets X11)
