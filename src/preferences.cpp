@@ -1,7 +1,9 @@
+// src/preferences.cpp
 #include "preferences.h"
 #include "config.h"
 #include <QFormLayout>
 #include <QSlider>
+#include <QLabel>
 #include <QPushButton>
 #include <QColorDialog>
 #include <QFontDialog>
@@ -10,20 +12,38 @@ PreferencesWindow::PreferencesWindow() {
     setWindowTitle("Murrikey Settings");
     auto* layout = new QFormLayout(this);
 
+    // Slider Posisi Vertikal
     auto* ySlider = new QSlider(Qt::Horizontal);
     ySlider->setRange(0, 1080);
     ySlider->setValue(Config::instance().load("y", 800).toInt());
+
+    // Slider Durasi Muncul (Hide Duration)
+    auto* durationSlider = new QSlider(Qt::Horizontal);
+    durationSlider->setRange(500, 10000); // 0.5 detik sampai 10 detik
+    durationSlider->setValue(Config::instance().load("hide_duration", 3000).toInt());
+    auto* durationLabel = new QLabel(QString("%1 ms").arg(durationSlider->value()));
 
     auto* colorBtn = new QPushButton("Pick Color");
     auto* fontBtn = new QPushButton("Pick Font");
 
     layout->addRow("Vertical Position:", ySlider);
-    layout->addRow("Color:", colorBtn);
-    layout->addRow("Font:", fontBtn);
+    layout->addRow("Hide Duration (ms):", durationSlider);
+    layout->addRow("", durationLabel); // Menampilkan angka ms
+    layout->addRow("Text Color:", colorBtn);
+    layout->addRow("Font Family:", fontBtn);
 
+    // Koneksi Slider Posisi
     connect(ySlider, &QSlider::valueChanged, this, [this](int v) {
         Config::instance().save("y", v); emit configChanged();
     });
+
+    // Koneksi Slider Durasi
+    connect(durationSlider, &QSlider::valueChanged, this, [this, durationLabel](int v) {
+        durationLabel->setText(QString("%1 ms").arg(v));
+        Config::instance().save("hide_duration", v);
+        emit configChanged(); // Agar overlay tahu durasi berubah
+    });
+
 
     connect(colorBtn, &QPushButton::clicked, this, [this]() {
         QColor c = QColorDialog::getColor(Qt::green, this);

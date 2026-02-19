@@ -64,6 +64,7 @@ void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool 
     // 2. Tampilkan kembali label (reset opacity ke 1.0)
     label->graphicsEffect()->setProperty("opacity", 1.0);
 
+
     // 3. Logika pemrosesan tombol (kode lama kamu)
     if (name == "BackSpace") {
         if (!buffer.isEmpty()) buffer.chop(1);
@@ -78,6 +79,6 @@ void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool 
     if (buffer.length() > 30) buffer = buffer.right(30);
     label->setText(buffer);
 
-    // 4. Jalankan timer baru (3 detik dari ketikan TERAKHIR)
-    hideTimer->start(3000); 
+    int duration = Config::instance().load("hide_duration", 3000).toInt();
+    hideTimer->start(duration);
 }

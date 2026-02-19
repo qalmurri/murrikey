@@ -3,6 +3,7 @@
 #include <QMenu>
 #include <QStyle>
 #include <QTimer>
+#include <QMessageBox> // Tambahkan ini untuk jendela About
 #include "overlay.h"
 #include "preferences.h"
 #include "input_manager.h"
@@ -10,6 +11,7 @@
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
+
     ScreenkeyOverlay overlay;
     PreferencesWindow prefs;
     InputManager input;
@@ -17,16 +19,39 @@ int main(int argc, char *argv[]) {
     QObject::connect(&input, &InputManager::keyPressed, &overlay, &ScreenkeyOverlay::handleKeyPress);
     QObject::connect(&prefs, &PreferencesWindow::configChanged, &overlay, &ScreenkeyOverlay::refresh);
 
+    // --- SETUP SYSTEM TRAY ---
     QSystemTrayIcon tray(app.style()->standardIcon(QStyle::SP_ComputerIcon));
     QMenu menu;
+
+    // Tambahkan aksi Preferences
     menu.addAction("Preferences", &prefs, &QWidget::show);
+
+    // Tambahkan aksi About menggunakan Lambda Function agar tetap ringkas
+    menu.addAction("About", []() {
+        QMessageBox aboutBox;
+        aboutBox.setWindowTitle("About Murrikey");
+        aboutBox.setIcon(QMessageBox::Information);
+        aboutBox.setTextFormat(Qt::RichText);
+        aboutBox.setText(
+            "<h3>Murrikey v1.0</h3>"
+            "<p>A lightweight screenkey alternative for Linux (X11).</p>"
+            "<p>Developed by <b>qalmurri</b> on ThinkPad P51.</p>"
+            "<p>Built with C++ and Qt6.</p>"
+        );
+        aboutBox.exec();
+    });
+
+    menu.addSeparator(); // Garis pembatas agar lebih rapi
     menu.addAction("Quit", &app, &QCoreApplication::quit);
+
     tray.setContextMenu(&menu);
     tray.show();
 
+    // --- LOGIKA INPUT POLLING ---
     QTimer timer;
     QObject::connect(&timer, &QTimer::timeout, &input, &InputManager::check);
     timer.start(10);
+
     overlay.show();
     return app.exec();
 }
