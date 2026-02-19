@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
     QTimer timer;
     QObject::connect(&timer, &QTimer::timeout, &input, &InputManager::check);
     timer.start(10);
-
     overlay.show();
     return app.exec();
 }

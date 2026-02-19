@@ -13,9 +13,9 @@ screenkey_app
 murrikey
 
 # Qt & OS junk
-.qt/
+.qt
 .directory
 .DS_Store
-
+.cache
 # Konfigurasi lokal (agar tidak bentrok dengan orang lain)
 *.conf
