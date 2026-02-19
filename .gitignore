@@ -1,0 +1,21 @@
+# Build directory (hasil cmake/make)
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*_autogen/
+*.moc
+*.app
+
+# Executable
+screenkey_app
+murrikey
+
+# Qt & OS junk
+.qt/
+.directory
+.DS_Store
+
+# Konfigurasi lokal (agar tidak bentrok dengan orang lain)
+*.conf
