@@ -1,0 +1,5 @@
+/home/qalmurri/Documents/murrikey/CMakeFiles/murrikey.dir
+/home/qalmurri/Documents/murrikey/CMakeFiles/edit_cache.dir
+/home/qalmurri/Documents/murrikey/CMakeFiles/rebuild_cache.dir
+/home/qalmurri/Documents/murrikey/CMakeFiles/murrikey_autogen_timestamp_deps.dir
+/home/qalmurri/Documents/murrikey/CMakeFiles/murrikey_autogen.dir
