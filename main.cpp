@@ -19,7 +19,6 @@
 #include <X11/XKBlib.h>
 #include <X11/Xutil.h>
 
-// --- KELAS PREFERENCES ---
 class PreferencesWindow : public QDialog {
     Q_OBJECT
 public:
