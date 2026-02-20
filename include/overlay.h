@@ -7,9 +7,11 @@
 
 class ScreenkeyOverlay : public QWidget {
     Q_OBJECT
+
 public:
     ScreenkeyOverlay();
     void refresh();
+    void removeLastChar();
 
 public slots:
     void handleKeyPress(QString name, bool ctrl, bool shift, bool alt);

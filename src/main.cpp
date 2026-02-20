@@ -16,8 +16,15 @@ int main(int argc, char *argv[]) {
     ScreenkeyOverlay overlay;
     PreferencesWindow prefs;
     InputManager input;
-
-    QObject::connect(&input, &InputManager::keyPressed, &overlay, &ScreenkeyOverlay::handleKeyPress);
+    QObject::connect(&input, &InputManager::keyPressed, [&](QString name, bool ctrl, bool shift, bool alt) {
+        int bsMode = Config::instance().load("backspace_mode", 0).toInt();
+    
+        if (name == "BackSpace" && bsMode == 1) {
+            overlay.removeLastChar();
+        } else {
+            overlay.handleKeyPress(name, ctrl, shift, alt);
+        }
+    });
     QObject::connect(&prefs, &PreferencesWindow::configChanged, &overlay, &ScreenkeyOverlay::refresh);
     QObject::connect(&prefs, &PreferencesWindow::configChanged, [&]() {
         int mode = Config::instance().load("input_mode", 0).toInt();

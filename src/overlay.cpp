@@ -57,21 +57,18 @@ QString ScreenkeyOverlay::formatKey(QString key) {
 }
 
 void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool alt) {
-    // 1. Hentikan timer dan animasi yang sedang berjalan (jika ada)
     hideTimer->stop();
     anim->stop();
-
-    // 2. Tampilkan kembali label (reset opacity ke 1.0)
     label->graphicsEffect()->setProperty("opacity", 1.0);
 
-
-    // 3. Logika pemrosesan tombol (kode lama kamu)
     if (name == "BackSpace") {
-        if (!buffer.isEmpty()) buffer.chop(1);
+        QString fKey = formatKey(name); // Akan jadi ⌫ sesuai map kamu
+        buffer += " [" + fKey + "] ";
     } else {
         QString fKey = formatKey(name);
         QString full = QString(ctrl ? "Ctrl+" : "") + (alt ? "Alt+" : "") + 
                        ((shift && fKey.length() > 1) ? "Shift+" : "") + fKey;
+        
         if (ctrl || alt || fKey.length() > 1) buffer += " [" + full + "] ";
         else buffer += fKey;
     }
@@ -79,6 +76,25 @@ void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool 
     if (buffer.length() > 30) buffer = buffer.right(30);
     label->setText(buffer);
 
+    int duration = Config::instance().load("hide_duration", 3000).toInt();
+    hideTimer->start(duration);
+}
+
+void ScreenkeyOverlay::removeLastChar() {
+    // 1. Reset timer dan animasi (sama seperti saat ketik huruf biasa)
+    hideTimer->stop();
+    anim->stop();
+    label->graphicsEffect()->setProperty("opacity", 1.0);
+
+    // 2. Hapus karakter terakhir dari 'buffer' (nama variabel yang benar)
+    if (!buffer.isEmpty()) {
+        // Jika karakter terakhir adalah spasi dari penutup kurung " ] ", 
+        // mungkin kamu mau hapus satu blok, tapi untuk simpelnya kita hapus 1 karakter saja:
+        buffer.chop(1); 
+        label->setText(buffer);
+    }
+
+    // 3. Jalankan kembali timer sembunyi
     int duration = Config::instance().load("hide_duration", 3000).toInt();
     hideTimer->start(duration);
 }

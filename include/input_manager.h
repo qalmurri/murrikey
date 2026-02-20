@@ -8,7 +8,6 @@ typedef struct _XDisplay Display;
 
 class InputManager : public QObject {
     Q_OBJECT
-
 public:
     InputManager();
     ~InputManager();
@@ -19,14 +18,10 @@ signals:
     void keyPressed(QString name, bool ctrl, bool shift, bool alt);
 
 private:
-    int currentMode = 0;
-    QString handleKeySym(unsigned long sym);
-    QString handleKeyCode(int keycode);
-
     Display* display;
     char old_keys[32];
-    bool isModifier(unsigned long s); 
-
+    int currentMode;
+    bool isModifier(unsigned long s);
     QString mapToCustomDigit(unsigned long sym);
 };
 

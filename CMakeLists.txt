@@ -15,6 +15,7 @@ set(HEADERS
     include/input_manager.h
     include/overlay.h
     include/preferences.h
+    include/key_mapper.h
 )
 
 set(SOURCES
@@ -23,6 +24,7 @@ set(SOURCES
     src/input_manager.cpp
     src/overlay.cpp
     src/preferences.cpp
+    src/key_mapper.cpp
 )
 
 # Tambahkan HEADERS ke add_executable

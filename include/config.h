@@ -1,10 +1,11 @@
 #ifndef CONFIG_H
 #define CONFIG_H
-#define MODE_KEYSYM 0
-#define MODE_KEYCODE 1
 
 #include <QSettings>
 #include <QVariant>
+
+#define MODE_KEYSYM 0
+#define MODE_KEYCODE 1
 
 class Config {
 public:
