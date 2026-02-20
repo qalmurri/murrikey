@@ -7,6 +7,7 @@
 #include "overlay.h"
 #include "preferences.h"
 #include "input_manager.h"
+#include "config.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -18,15 +19,17 @@ int main(int argc, char *argv[]) {
 
     QObject::connect(&input, &InputManager::keyPressed, &overlay, &ScreenkeyOverlay::handleKeyPress);
     QObject::connect(&prefs, &PreferencesWindow::configChanged, &overlay, &ScreenkeyOverlay::refresh);
+    QObject::connect(&prefs, &PreferencesWindow::configChanged, [&]() {
+        int mode = Config::instance().load("input_mode", 0).toInt();
+        input.setMode(mode);
+        overlay.refresh(); // Biar tampilan ikut update
+    });
 
-    // --- SETUP SYSTEM TRAY ---
     QSystemTrayIcon tray(app.style()->standardIcon(QStyle::SP_ComputerIcon));
     QMenu menu;
 
-    // Tambahkan aksi Preferences
     menu.addAction("Preferences", &prefs, &QWidget::show);
 
-    // Tambahkan aksi About menggunakan Lambda Function agar tetap ringkas
     menu.addAction("About", []() {
         QMessageBox aboutBox;
         aboutBox.setWindowTitle("About Murrikey");

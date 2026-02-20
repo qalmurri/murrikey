@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QColorDialog>
 #include <QFontDialog>
+#include <QComboBox>
 
 PreferencesWindow::PreferencesWindow() {
     setWindowTitle("Murrikey Settings");
@@ -26,18 +27,29 @@ PreferencesWindow::PreferencesWindow() {
     auto* colorBtn = new QPushButton("Pick Color");
     auto* fontBtn = new QPushButton("Pick Font");
 
+    auto* modeCombo = new QComboBox();
+    modeCombo->addItem("Character Mode (KeySym)", 0);
+    modeCombo->addItem("Hardware Mode (KeyCode)", 1);
+
+    int savedMode = Config::instance().load("input_mode", 0).toInt();
+    modeCombo->setCurrentIndex(savedMode);
+
+    layout->addRow("Input Detection", modeCombo);
     layout->addRow("Vertical Position:", ySlider);
     layout->addRow("Hide Duration (ms):", durationSlider);
     layout->addRow("", durationLabel); // Menampilkan angka ms
     layout->addRow("Text Color:", colorBtn);
     layout->addRow("Font Family:", fontBtn);
 
-    // Koneksi Slider Posisi
+    connect(modeCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int index) {
+        Config::instance().save("input_mode", index);
+        emit configChanged(); // Signal agar main.cpp/input_manager update
+    });
+
     connect(ySlider, &QSlider::valueChanged, this, [this](int v) {
         Config::instance().save("y", v); emit configChanged();
     });
 
-    // Koneksi Slider Durasi
     connect(durationSlider, &QSlider::valueChanged, this, [this, durationLabel](int v) {
         durationLabel->setText(QString("%1 ms").arg(v));
         Config::instance().save("hide_duration", v);
