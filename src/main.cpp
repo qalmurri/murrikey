@@ -7,6 +7,8 @@
 #include "overlay.h"
 #include "preferences.h"
 #include "input_manager.h"
+#include "config.h"
+
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);

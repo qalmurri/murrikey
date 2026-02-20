@@ -15,7 +15,8 @@ private:
     QTimer* hideTimer;
     QLabel* label;
     QString buffer;
-    QPropertyAnimation* anim;
     QString formatKey(QString key);
+protected:
+    void showEvent(QShowEvent *event) override;
 };
 #endif

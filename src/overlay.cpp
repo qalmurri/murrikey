@@ -4,29 +4,23 @@
 #include <QGraphicsOpacityEffect>
 #include <QTimer>
 #include <QMap>
+
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 ScreenkeyOverlay::ScreenkeyOverlay() {
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::Tool | Qt::WindowTransparentForInput);
     setAttribute(Qt::WA_TranslucentBackground);
     label = new QLabel(this);
     label->setAlignment(Qt::AlignCenter);
-    auto* eff = new QGraphicsOpacityEffect(this);
-    label->setGraphicsEffect(eff);
     auto* layout = new QVBoxLayout(this);
     layout->addWidget(label);
-    anim = new QPropertyAnimation(eff, "opacity");
-    anim->setDuration(500);
     hideTimer = new QTimer(this);
     hideTimer->setSingleShot(true);
     connect(hideTimer, &QTimer::timeout, this, [this]() {
-        anim->setStartValue(1.0);
-        anim->setEndValue(0.0);
-        anim->start();
-    });
-    connect(anim, &QPropertyAnimation::finished, this, [this, eff]() {
-        if (eff->opacity() == 0.0) {
-             buffer = ""; 
-             label->setText("");
-        }
+        buffer = ""; 
+        label->setText("");
     });
     refresh();
 }
@@ -44,33 +38,48 @@ QString ScreenkeyOverlay::formatKey(QString key) {
     return map.value(key, key);
 }
 void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool alt) {
+    if (name.isEmpty()) return;
     hideTimer->stop();
-    anim->stop();
-    label->graphicsEffect()->setProperty("opacity", 1.0);
-    if (name == "BackSpace") {
-        QString fKey = formatKey(name); // Akan jadi ⌫ sesuai map kamu
-        buffer += " [" + fKey + "] ";
+
+    if (name == "⌫") { // Bandingkan langsung dengan simbol
+        buffer += " [⌫] ";
     } else {
-        QString fKey = formatKey(name);
         QString full = QString(ctrl ? "Ctrl+" : "") + (alt ? "Alt+" : "") + 
-                       ((shift && fKey.length() > 1) ? "Shift+" : "") + fKey;
+                       ((shift && name.length() > 1) ? "Shift+" : "") + name;
         
-        if (ctrl || alt || fKey.length() > 1) buffer += " [" + full + "] ";
-        else buffer += fKey;
+        if (ctrl || alt || name.length() > 1) buffer += " [" + full + "] ";
+        else buffer += name;
     }
+
     if (buffer.length() > 30) buffer = buffer.right(30);
-    label->setText(buffer);
+    QString displayLayout = buffer;
+
+    // Batasi maksimal karakter, misal 25 karakter
+    int maxChars = 25; 
+    if (buffer.length() > maxChars) {
+        // Ambil 25 karakter terakhir dan tambahkan titik-titik di depannya
+        displayLayout = "..." + buffer.right(maxChars);
+    }
+
+    label->setText(displayLayout);
+    this->adjustSize(); 
+
     int duration = Config::instance().load("hide_duration", 3000).toInt();
     hideTimer->start(duration);
 }
 void ScreenkeyOverlay::removeLastChar() {
     hideTimer->stop();
-    anim->stop();
-    label->graphicsEffect()->setProperty("opacity", 1.0);
     if (!buffer.isEmpty()) {
         buffer.chop(1); 
         label->setText(buffer);
+        this->adjustSize();
     }
     int duration = Config::instance().load("hide_duration", 3000).toInt();
     hideTimer->start(duration);
+}
+void ScreenkeyOverlay::showEvent(QShowEvent *event) {
+    QWidget::showEvent(event);
+#ifdef Q_OS_WIN
+    SetWindowPos((HWND)winId(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+#endif
 }
