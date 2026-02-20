@@ -7,18 +7,14 @@
 #include "overlay.h"
 #include "preferences.h"
 #include "input_manager.h"
-#include "config.h"
-
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
-
     ScreenkeyOverlay overlay;
     PreferencesWindow prefs;
     InputManager input;
     QObject::connect(&input, &InputManager::keyPressed, [&](QString name, bool ctrl, bool shift, bool alt) {
         int bsMode = Config::instance().load("backspace_mode", 0).toInt();
-    
         if (name == "BackSpace" && bsMode == 1) {
             overlay.removeLastChar();
         } else {
@@ -31,12 +27,9 @@ int main(int argc, char *argv[]) {
         input.setMode(mode);
         overlay.refresh(); // Biar tampilan ikut update
     });
-
     QSystemTrayIcon tray(app.style()->standardIcon(QStyle::SP_ComputerIcon));
     QMenu menu;
-
     menu.addAction("Preferences", &prefs, &QWidget::show);
-
     menu.addAction("About", []() {
         QMessageBox aboutBox;
         aboutBox.setWindowTitle("About Murrikey");
@@ -50,18 +43,13 @@ int main(int argc, char *argv[]) {
         );
         aboutBox.exec();
     });
-
     menu.addSeparator(); // Garis pembatas agar lebih rapi
     menu.addAction("Quit", &app, &QCoreApplication::quit);
-
     tray.setContextMenu(&menu);
     tray.show();
-
-    // --- LOGIKA INPUT POLLING ---
     QTimer timer;
     QObject::connect(&timer, &QTimer::timeout, &input, &InputManager::check);
     timer.start(10);
-
     overlay.show();
     return app.exec();
 }
