@@ -4,21 +4,23 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
 find_package(Qt6 REQUIRED COMPONENTS Widgets Gui)
 find_package(X11 REQUIRED)
-include_directories(include)
+include_directories(src src/core src/ui src/utils)
 set(HEADERS
-    src/config.h
-    src/input_manager.h
-    src/overlay.h
-    src/preferences.h
-    src/key_mapper.h
+    src/utils/config.h
+    src/ui/overlay.h
+    src/ui/preferences.h
+    src/core/key_mapper.h
+    src/core/input_manager.h
 )
 set(SOURCES
     src/main.cpp
-    src/config.cpp
-    src/input_manager.cpp
-    src/overlay.cpp
-    src/preferences.cpp
-    src/key_mapper.cpp
+    src/utils/config.cpp
+    src/ui/overlay_core.cpp
+    src/ui/overlay_ui.cpp
+    src/ui/overlay_logic.cpp
+    src/ui/preferences.cpp
+    src/core/key_mapper.cpp
+    src/core/input_manager.cpp
 )
 add_executable(murrikey ${SOURCES} ${HEADERS})
 target_link_libraries(murrikey Qt6::Widgets X11)
