@@ -18,16 +18,13 @@ signals:
     void configChanged();
 
 private:
-    // Fungsi yang akan kita pecah ke preferences_ui.cpp
     void initWidgets();
     void setupLayout();
     
-    // Fungsi yang tetap di preferences.cpp
     void setupConnections();
     void loadSettings();
     void updatePreview();
 
-    // Widget members
     QLabel* previewLabel;
     QSlider *ySlider, *durationSlider;
     QLabel *durationLabel;
