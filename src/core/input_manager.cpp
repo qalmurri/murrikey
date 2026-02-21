@@ -43,25 +43,25 @@ void InputManager::check() {
     for (int i = 8; i < 256; i++) {
         bool isPressed = keys[i / 8] & (1 << (i % 8));
         bool wasPressed = old_keys[i / 8] & (1 << (i % 8));
-
+    
         if (isPressed) {
+            // Ambil KeySym untuk cek apakah ini modifier
+            KeySym sym = XkbKeycodeToKeysym(display, i, 0, 0);
+            bool isModifier = (sym >= XK_Shift_L && sym <= XK_Hyper_R);
+    
             if (!wasPressed) {
-                // 1. TEKAN PERTAMA: Kirim & Reset Timer
-                sendKey(i, ctrl, shift, alt, caps);
-                repeatTimers[i] = 0; 
+                // JANGAN KIRIM jika hanya tombol modifier yang ditekan sendirian
+                if (!isModifier) {
+                    sendKey(i, ctrl, shift, alt, caps);
+                }
+                repeatTimers[i] = 0;
             } else {
-                // 2. TAHAN: Abaikan modifier
-                KeySym sym = XkbKeycodeToKeysym(display, i, 0, 0);
-                if (!(sym >= XK_Shift_L && sym <= XK_Hyper_R)) {
+                // LOGIKA REPEAT: Hanya untuk tombol NON-MODIFIER
+                if (!isModifier) {
                     repeatTimers[i]++;
-
-                    // 3. LOGIKA REPEAT YANG STABIL
-                    // Tepat saat mencapai delay (misal 500ms / 50 ticks)
                     if (repeatTimers[i] == sysConfig.delayThreshold) {
                         sendKey(i, ctrl, shift, alt, caps);
-                    } 
-                    // Setelah delay lewat, kirim setiap interval (misal 30ms / 3 ticks)
-                    else if (repeatTimers[i] > sysConfig.delayThreshold) {
+                    } else if (repeatTimers[i] > sysConfig.delayThreshold) {
                         if ((repeatTimers[i] - sysConfig.delayThreshold) % sysConfig.rateThreshold == 0) {
                             sendKey(i, ctrl, shift, alt, caps);
                         }

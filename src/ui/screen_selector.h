@@ -20,10 +20,13 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    void paintEvent(QPaintEvent *event) override; // Ini yang bikin error "no declaration matches"
 
 private:
     QRubberBand *rubberBand;
     QPoint origin;
+    QPoint mousePos; // Ini yang tadi dibilang "not declared in this scope"
+    bool isSelecting = false;
 };
 
 #endif

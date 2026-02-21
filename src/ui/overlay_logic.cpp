@@ -5,46 +5,49 @@
 
 void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool alt) {
     if (name.isEmpty()) return;
-    hideTimer->stop();
 
+    // 1. FILTER: Jangan munculkan kalau cuma tombol modifier murni yang dikirim
+    if (name.contains("Control") || name.contains("Shift") || 
+        name.contains("Alt") || name.contains("Meta") || name.contains("Super")) {
+        return; 
+    }
+
+    hideTimer->stop();
     int threshold = Config::instance().load("smart_format_threshold", 2).toInt();
 
+    // 2. LOGIKA FORMATTING (Yang tadi hilang)
     QString currentFormatted;
     if (name == "⌫") {
         currentFormatted = " [⌫] ";
     } else {
         QString modifiers = "";
-        if (ctrl) modifiers += "Ctrl+";
-        if (alt)  modifiers += "Alt+";
+        if (ctrl)  modifiers += "Ctrl+";
+        if (alt)   modifiers += "Alt+";
         
-        // LOGIKA BARU: 
-        // Shift muncul jika:
-        // 1. Nama tombol lebih dari 1 karakter (F1, Enter, dll)
-        // 2. ATAU ada modifier lain yang aktif (Ctrl atau Alt)
+        // Shift muncul kalau ada temennya (Ctrl/Alt) atau tombol fungsi (F1, Enter, dll)
         if (shift && (name.length() > 1 || !modifiers.isEmpty())) {
             modifiers += "Shift+";
         }
 
         if (!modifiers.isEmpty() || name.length() > 1) {
-            // Kita paksa jadi Uppercase agar konsisten: [Ctrl+Shift+T]
+            // Shortcut dibungkus kotak [Ctrl+C]
             currentFormatted = " [" + modifiers + name.toUpper() + "] ";
         } else {
+            // Ketikan biasa
             currentFormatted = name;
         }
     }
 
+    // 3. LOGIKA REPEAT (Pakai currentFormatted yang sudah ada isinya)
     if (threshold > 0 && currentFormatted == lastKey && !currentFormatted.trimmed().isEmpty()) {
         repeatCount++;
-        
         if (repeatCount >= threshold) {
-            // Kita hapus tampilan angka lama (misal " x2")
             if (repeatCount > threshold) {
                 QString prevSuffix = QString(" x%1").arg(repeatCount - 1);
                 if (buffer.endsWith(prevSuffix)) {
                     buffer.chop(prevSuffix.length());
                 }
             }
-            // Tambahkan angka baru yang sinkron
             buffer += QString(" x%1").arg(repeatCount);
         } else {
             updateBuffer(currentFormatted);
