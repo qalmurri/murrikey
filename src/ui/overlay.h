@@ -15,14 +15,14 @@ public:
     void handleKeyPress(QString name, bool ctrl, bool shift, bool alt);
     void removeLastChar();
     void clearBuffer();
-    void applyEllipsis(); // Logika titik-titik
+    void applyEllipsis();
     void updateBuffer(QString text);
 
 protected:
-    void showEvent(QShowEvent *event) override; // (overlay_core.cpp)
+    void showEvent(QShowEvent *event) override;
 
 private:
-    void renderWithHighlight(QString highlightPart); // TAMBAHKAN INI, BOR!
+    void renderWithHighlight(QString highlightPart);
     QLabel* label;
     QTimer* hideTimer;
     QString buffer;

@@ -7,15 +7,15 @@
 
 class ScreenSelector : public QWidget {
     Q_OBJECT
+    
 public:
     explicit ScreenSelector(QWidget *parent = nullptr);
+
 signals:
     void areaSelected(QRect rect);
 
 protected:
-    // WAJIB ADA INI, BOR!
     void showEvent(QShowEvent *event) override; 
-    
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;

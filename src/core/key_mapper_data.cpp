@@ -2,7 +2,6 @@
 #include <X11/keysym.h>
 
 void KeyMapper::loadCache() {
-    // --- Basic & Navigation ---
     symbolCache[XK_space]     = " ";
     symbolCache[XK_Return]    = "⏎";
     symbolCache[XK_BackSpace] = "⌫";
@@ -48,7 +47,7 @@ void KeyMapper::loadCache() {
     numlockCache[XK_KP_Page_Up]  = "9";
     numlockCache[XK_KP_Delete]   = ".";
 
-    symbolCache[XK_F1]  = "F1"; // Tetap teks agar jelas, atau pakai icon
+    symbolCache[XK_F1]  = "F1";
     symbolCache[XK_Print] = "⎙";
     symbolCache[XK_Pause] = "Ⅱ";
 }

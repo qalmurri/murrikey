@@ -1,6 +1,6 @@
 #include "screen_selector.h"
 #include <QMouseEvent>
-#include <QShowEvent> // Tambahkan ini!
+#include <QShowEvent>
 #include <QGuiApplication>
 #include <QScreen>
 #include <QRubberBand>
@@ -43,7 +43,7 @@ void ScreenSelector::mouseReleaseEvent(QMouseEvent *event) {
             QRect globalRect = QRect(this->mapToGlobal(finalRect.topLeft()), finalRect.size());
             emit areaSelected(globalRect);
         }
-        this->close(); // Ini akan memicu WA_DeleteOnClose
+        this->close();
     }
 }
 

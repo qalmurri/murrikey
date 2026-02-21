@@ -9,7 +9,6 @@ void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool 
 
     int threshold = Config::instance().load("smart_format_threshold", 2).toInt();
 
-    // 1. Formatting nama tombol
     QString currentFormatted;
     if (name == "⌫") {
         currentFormatted = " [⌫] ";
@@ -17,24 +16,35 @@ void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool 
         QString modifiers = "";
         if (ctrl) modifiers += "Ctrl+";
         if (alt)  modifiers += "Alt+";
-        if (shift && name.length() > 1) modifiers += "Shift+";
+        
+        // LOGIKA BARU: 
+        // Shift muncul jika:
+        // 1. Nama tombol lebih dari 1 karakter (F1, Enter, dll)
+        // 2. ATAU ada modifier lain yang aktif (Ctrl atau Alt)
+        if (shift && (name.length() > 1 || !modifiers.isEmpty())) {
+            modifiers += "Shift+";
+        }
 
         if (!modifiers.isEmpty() || name.length() > 1) {
-            currentFormatted = " [" + modifiers + name + "] ";
+            // Kita paksa jadi Uppercase agar konsisten: [Ctrl+Shift+T]
+            currentFormatted = " [" + modifiers + name.toUpper() + "] ";
         } else {
             currentFormatted = name;
         }
     }
 
-    // 2. Logika Smart Formatting / Aggregation
-    // Bagian ini sekarang hanya mengurus "ISI" buffer.
     if (threshold > 0 && currentFormatted == lastKey && !currentFormatted.trimmed().isEmpty()) {
         repeatCount++;
+        
         if (repeatCount >= threshold) {
+            // Kita hapus tampilan angka lama (misal " x2")
             if (repeatCount > threshold) {
                 QString prevSuffix = QString(" x%1").arg(repeatCount - 1);
-                buffer.chop(prevSuffix.length());
+                if (buffer.endsWith(prevSuffix)) {
+                    buffer.chop(prevSuffix.length());
+                }
             }
+            // Tambahkan angka baru yang sinkron
             buffer += QString(" x%1").arg(repeatCount);
         } else {
             updateBuffer(currentFormatted);
@@ -45,20 +55,10 @@ void ScreenkeyOverlay::handleKeyPress(QString name, bool ctrl, bool shift, bool 
         updateBuffer(currentFormatted);
     }
 
-    // 3. Render ke UI dengan Highlight pada Key Terakhir
-    // Kita ambil bagian yang baru saja ditambahkan ke buffer untuk di-highlight
-    // Jika Smart Format aktif (misal x3), maka " x3" lah yang di-underline.
-    QString highlightPart;
-    if (repeatCount >= threshold && threshold > 0) {
-        highlightPart = QString(" x%1").arg(repeatCount);
-    } else {
-        highlightPart = currentFormatted;
-    }
-
+    QString highlightPart = (repeatCount >= threshold) ? QString(" x%1").arg(repeatCount) : currentFormatted;
     renderWithHighlight(highlightPart);
-
-    int duration = Config::instance().load("hide_duration", 3000).toInt();
-    hideTimer->start(duration);
+    
+    hideTimer->start(Config::instance().load("hide_duration", 3000).toInt());
 }
 
 void ScreenkeyOverlay::renderWithHighlight(QString highlightPart) {
@@ -67,7 +67,6 @@ void ScreenkeyOverlay::renderWithHighlight(QString highlightPart) {
     
     QString fullText = buffer;
     
-    // Logika Ellipsis (Clipping)
     if (metrics.horizontalAdvance(fullText) > maxWidth) {
         while (metrics.horizontalAdvance("..." + fullText) > maxWidth && fullText.length() > 0) {
             fullText.remove(0, 1);
@@ -75,8 +74,8 @@ void ScreenkeyOverlay::renderWithHighlight(QString highlightPart) {
         fullText = "..." + fullText;
     }
 
-    // Terapkan Underline hanya pada bagian akhir (key terbaru)
     label->setTextFormat(Qt::RichText);
+
     if (fullText.endsWith(highlightPart) && !highlightPart.isEmpty()) {
         QString oldPart = fullText.left(fullText.length() - highlightPart.length());
         label->setText(oldPart + "<u>" + highlightPart + "</u>");
@@ -84,8 +83,6 @@ void ScreenkeyOverlay::renderWithHighlight(QString highlightPart) {
         label->setText(fullText);
     }
 }
-
-// --- Fungsi Helper Tetap Sama ---
 
 void ScreenkeyOverlay::updateBuffer(QString text) {
     buffer += text;
@@ -103,13 +100,12 @@ void ScreenkeyOverlay::removeLastChar() {
     hideTimer->stop();
     if (!buffer.isEmpty()) {
         buffer.chop(1);
-        renderWithHighlight(""); // Render ulang tanpa highlight setelah dihapus
+        renderWithHighlight("");
     }
     int duration = Config::instance().load("hide_duration", 3000).toInt();
     hideTimer->start(duration);
 }
 
 void ScreenkeyOverlay::applyEllipsis() {
-    // Fungsi ini sekarang opsional karena logikanya sudah masuk ke renderWithHighlight
     renderWithHighlight(""); 
 }

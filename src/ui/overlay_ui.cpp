@@ -14,18 +14,19 @@ void ScreenkeyOverlay::refresh() {
     QString font = Config::instance().load("font_family", "Monospace").toString();
     
     this->setMinimumSize(0, 0);
-    this->setMaximumSize(16384, 16384); // Limit maksimal X11
+    this->setMaximumSize(16384, 16384);
 
     this->setGeometry(x, y, w, h);
     
-    label->setFixedSize(w, h); // Kunci ukuran label agar tidak memelarkan window
+    label->setFixedSize(w, h);
     
-    int dynamicFontSize = h * 0.6;
+    int dynamicFontSize = h * 0.5;
 
     label->setStyleSheet(QString(
         "font-size: %1px; font-weight: bold; color: %2; font-family: '%3'; "
         "background-color: rgba(20, 20, 20, 220); "
         "border-radius: 10px; border: 2px solid #333;"
+        "padding-bottom: 5px;"
     ).arg(dynamicFontSize).arg(color).arg(font));
     
     label->setAlignment(Qt::AlignCenter);

@@ -11,10 +11,8 @@ MurrikeyApp::MurrikeyApp(QObject *parent) : QObject(parent) {
 }
 
 void MurrikeyApp::setupConnections() {
-    // Hubungkan Input ke Overlay
     connect(&input, &InputManager::keyPressed, this, [this](QString name, bool ctrl, bool shift, bool alt) {
         int bsMode = Config::instance().load("backspace_mode", 0).toInt();
-        // Cek "⌫" karena KeyMapper sekarang mengirim simbol cantik
         if ((name == "BackSpace" || name == "⌫") && bsMode == 1) {
             overlay.removeLastChar();
         } else {
@@ -22,14 +20,11 @@ void MurrikeyApp::setupConnections() {
         }
     });
 
-    // Hubungkan Preferences ke Overlay & Input
     connect(&prefs, &PreferencesWindow::configChanged, &overlay, &ScreenkeyOverlay::refresh);
     connect(&prefs, &PreferencesWindow::configChanged, this, [this]() {
         int mode = Config::instance().load("input_mode", 0).toInt();
         input.setMode(mode);
     });
-
-    // Setup Timer untuk polling keyboard
     connect(&inputTimer, &QTimer::timeout, &input, &InputManager::check);
 }
 

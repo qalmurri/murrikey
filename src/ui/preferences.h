@@ -8,9 +8,13 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QPushButton>
-
+#include <QVariant>       // WAJIB ADA
+#include <QStyleOption>    // UNTUK FIX QStyleOptionFrame / QStyleOptionButton
+#include <QStyle> // Tambahkan ini
+                  //
 class PreferencesWindow : public QDialog {
     Q_OBJECT
+
 public:
     PreferencesWindow();
 
@@ -20,7 +24,6 @@ signals:
 private:
     void initWidgets();
     void setupLayout();
-    
     void setupConnections();
     void loadSettings();
     void updatePreview();

@@ -9,11 +9,10 @@
 PreferencesWindow::PreferencesWindow() {
     setWindowTitle("Murrikey Settings");
     
-    initWidgets();      // Panggil dari preferences_ui.cpp
-    setupLayout();      // Panggil dari preferences_ui.cpp
-    loadSettings();     // Urusan data
-    setupConnections(); // Urusan kabel/logic
-    
+    initWidgets();      
+    setupLayout();      
+    loadSettings();     
+    setupConnections(); 
     updatePreview();
 }
 

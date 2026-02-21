@@ -12,7 +12,7 @@ void InputManager::processKeyChange(const char* keys, bool numLockOn, bool ctrl,
                 int keycode = i * 8 + bit;
                 QString result;
 
-                if (currentMode == 1) { // MODE_KEYCODE
+                if (currentMode == 1) {
                     result = QString("KC_%1").arg(keycode);
                 } else {
                     unsigned long sym = XkbKeycodeToKeysym(display, keycode, 0, (shift ^ caps) ? 1 : 0);

@@ -7,6 +7,7 @@ find_package(X11 REQUIRED)
 include_directories(src src/core src/ui src/utils)
 set(HEADERS
     src/utils/config.h
+    src/utils/hardware_sync.h
     src/ui/overlay.h
     src/ui/preferences.h
     src/ui/screen_selector.h
@@ -17,6 +18,7 @@ set(HEADERS
 set(SOURCES
     src/main.cpp
     src/utils/config.cpp
+    src/utils/hardware_sync.cpp
     src/ui/overlay_core.cpp
     src/ui/overlay_ui.cpp
     src/ui/overlay_logic.cpp

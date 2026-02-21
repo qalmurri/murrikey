@@ -10,6 +10,7 @@
 
 class MurrikeyApp : public QObject {
     Q_OBJECT
+
 public:
     explicit MurrikeyApp(QObject *parent = nullptr);
     void start();
