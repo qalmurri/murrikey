@@ -28,7 +28,6 @@ void PreferencesWindow::loadSettings() {
 }
 
 void PreferencesWindow::setupConnections() {
-    // Area Selector
     connect(selectAreaBtn, &QPushButton::clicked, this, [this]() {
         if (currentSelector) { currentSelector->raise(); return; }
         currentSelector = new ScreenSelector();
@@ -43,7 +42,6 @@ void PreferencesWindow::setupConnections() {
         currentSelector->show();
     });
 
-    // Color & Font
     connect(colorBtn, &QPushButton::clicked, this, [this]() {
         QColor c = QColorDialog::getColor(Qt::green, this);
         if (c.isValid()) { Config::instance().save("color", c.name()); emit configChanged(); }
@@ -54,7 +52,6 @@ void PreferencesWindow::setupConnections() {
         if (ok) { Config::instance().save("font_family", f.family()); emit configChanged(); }
     });
 
-    // Sliders & Spinbox
     connect(ySlider, &QSlider::valueChanged, this, [this](int v) {
         Config::instance().save("y_offset", v); emit configChanged();
     });
@@ -63,7 +60,6 @@ void PreferencesWindow::setupConnections() {
         Config::instance().save("smart_format_threshold", v); emit configChanged();
     });
 
-    // Refresh Preview
     connect(this, &PreferencesWindow::configChanged, this, &PreferencesWindow::updatePreview);
 }
 

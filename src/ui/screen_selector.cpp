@@ -15,12 +15,9 @@ ScreenSelector::ScreenSelector(QWidget *parent) : QWidget(parent) {
     rubberBand = new QRubberBand(QRubberBand::Rectangle, this);
 }
 
-// Pastikan setiap kali show, dia mengambil snapshot layar terbaru
 void ScreenSelector::showEvent(QShowEvent *event) {
     QWidget::showEvent(event);
-    // Cover seluruh area monitor yang tersedia
     setGeometry(QGuiApplication::primaryScreen()->virtualGeometry());
-    // Reset posisi rubberband agar tidak nyangkut seleksi lama
     rubberBand->hide();
     rubberBand->setGeometry(0, 0, 0, 0);
 }

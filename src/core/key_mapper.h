@@ -12,7 +12,6 @@ public:
 
 private:
     static QMap<unsigned long, QString> symbolCache;
-    // static QMap<unsigned long, QString> numLockOn;
     static QMap<unsigned long, QString> numlockCache;
 };
 

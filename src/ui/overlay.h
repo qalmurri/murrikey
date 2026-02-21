@@ -22,6 +22,7 @@ protected:
     void showEvent(QShowEvent *event) override; // (overlay_core.cpp)
 
 private:
+    void renderWithHighlight(QString highlightPart); // TAMBAHKAN INI, BOR!
     QLabel* label;
     QTimer* hideTimer;
     QString buffer;
