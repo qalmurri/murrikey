@@ -21,6 +21,7 @@ set(SOURCES
     src/ui/overlay_ui.cpp
     src/ui/overlay_logic.cpp
     src/ui/preferences.cpp
+    src/ui/preferences_ui.cpp
     src/ui/screen_selector.cpp
     src/core/murrikey_app.cpp
     src/core/key_mapper.cpp
