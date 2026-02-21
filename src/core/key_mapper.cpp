@@ -5,30 +5,20 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 
-// Inisialisasi cache statis
+// Inisialisasi semua cache statis
 QMap<unsigned long, QString> KeyMapper::symbolCache;
+QMap<unsigned long, QString> KeyMapper::numlockCache; // Tambahkan ini agar tidak undefined
 
-void KeyMapper::loadCache() {
-    symbolCache[XK_space] = " ";
-    symbolCache[XK_Return] = "⏎";
-    symbolCache[XK_BackSpace] = "⌫";
-    symbolCache[XK_Tab] = "⇥";
-    symbolCache[XK_Escape] = "⎋";
-    symbolCache[XK_Left] = "←";
-    symbolCache[XK_Right] = "→";
-    symbolCache[XK_Up] = "↑";
-    symbolCache[XK_Down] = "↓";
-}
-
-QString KeyMapper::map(unsigned long sym) {
+// Sesuaikan parameter di sini (tambah bool numLockOn)
+QString KeyMapper::map(unsigned long sym, bool numLockOn) {
     if (symbolCache.isEmpty()) loadCache();
     
-    // 1. Ambil nama asli dari X11 dulu
+    // 1. Ambil nama asli dari X11
     char* name = XKeysymToString(sym);
     if (!name) return "";
     QString keyName(name);
 
-    // 2. Cek Custom Mapping dari Config (JSON) - Biar fitur lama tetep jalan
+    // 2. Cek Custom Mapping dari JSON (Prioritas Utama)
     QString jsonStr = Config::instance().load("custom_mapping", "{}").toString();
     QJsonDocument doc = QJsonDocument::fromJson(jsonStr.toUtf8());
     QJsonObject customMap = doc.object();
@@ -37,10 +27,15 @@ QString KeyMapper::map(unsigned long sym) {
         return customMap.value(keyName).toString();
     }
 
-    // 3. Cek Simbol Cantik (⏎, ⌫, dll)
+    // 3. LOGIKA NUMLOCK: Cek Numpad Cache jika NumLock aktif
+    if (numLockOn && numlockCache.contains(sym)) {
+        return numlockCache[sym];
+    }
+    
+    // 4. Cek Simbol Standar
     if (symbolCache.contains(sym)) return symbolCache[sym];
 
-    // 4. Cleanup nama teknis X11
+    // 5. Cleanup Teknis X11
     if (keyName == "bracketleft") return "[";
     if (keyName == "bracketright") return "]";
     if (keyName == "semicolon") return ";";

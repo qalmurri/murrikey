@@ -9,8 +9,10 @@ set(HEADERS
     src/utils/config.h
     src/ui/overlay.h
     src/ui/preferences.h
+    src/ui/screen_selector.h
     src/core/key_mapper.h
     src/core/input_manager.h
+    src/core/murrikey_app.h
 )
 set(SOURCES
     src/main.cpp
@@ -19,8 +21,12 @@ set(SOURCES
     src/ui/overlay_ui.cpp
     src/ui/overlay_logic.cpp
     src/ui/preferences.cpp
+    src/ui/screen_selector.cpp
+    src/core/murrikey_app.cpp
     src/core/key_mapper.cpp
+    src/core/key_mapper_data.cpp
     src/core/input_manager.cpp
+    src/core/input_x11.cpp
 )
 add_executable(murrikey ${SOURCES} ${HEADERS})
 target_link_libraries(murrikey Qt6::Widgets X11)

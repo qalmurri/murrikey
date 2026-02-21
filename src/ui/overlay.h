@@ -11,11 +11,7 @@ class ScreenkeyOverlay : public QWidget {
 
 public:
     explicit ScreenkeyOverlay(QWidget *parent = nullptr);
-
-    // --- Bagian UI (overlay_ui.cpp) ---
     void refresh(); 
-
-    // --- Bagian Logic (overlay_logic.cpp) ---
     void handleKeyPress(QString name, bool ctrl, bool shift, bool alt);
     void removeLastChar();
     void clearBuffer();
@@ -29,6 +25,8 @@ private:
     QLabel* label;
     QTimer* hideTimer;
     QString buffer;
+    QString lastKey;
+    int repeatCount = 1;
 };
 
 #endif
