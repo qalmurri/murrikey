@@ -9,7 +9,7 @@ set(HEADERS
     src/utils/config.h
     src/utils/hardware_sync.h
     src/ui/overlay/overlay.h
-    src/ui/preferences.h
+    src/ui/preferences/preferences.h
     src/ui/screen_selector.h
     src/core/key_mapper/key_mapper.h
     src/core/input/input_manager.h
@@ -23,8 +23,8 @@ set(SOURCES
     src/ui/overlay/overlay_core.cpp
     src/ui/overlay/overlay_ui.cpp
     src/ui/overlay/overlay_logic.cpp
-    src/ui/preferences.cpp
-    src/ui/preferences_ui.cpp
+    src/ui/preferences/preferences.cpp
+    src/ui/preferences/preferences_ui.cpp
     src/ui/screen_selector.cpp
     src/core/app.cpp
     src/core/key_mapper/key_mapper.cpp
