@@ -1,6 +1,6 @@
 #include "input_x11.h"
 #include "../utils/hardware_sync.h"
-#include "key_mapper.h"
+#include "key_mapper/key_mapper.h"
 
 #include <cstring>
 

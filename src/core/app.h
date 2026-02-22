@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QSystemTrayIcon>
 #include <QTimer>
-#include "overlay.h"
+#include "overlay/overlay.h"
 #include "preferences.h"
 #include "input/input_manager.h"
 

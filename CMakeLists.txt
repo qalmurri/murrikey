@@ -8,10 +8,10 @@ include_directories(src src/core src/ui src/utils)
 set(HEADERS
     src/utils/config.h
     src/utils/hardware_sync.h
-    src/ui/overlay.h
+    src/ui/overlay/overlay.h
     src/ui/preferences.h
     src/ui/screen_selector.h
-    src/core/key_mapper.h
+    src/core/key_mapper/key_mapper.h
     src/core/input/input_manager.h
     src/core/input/input_backend.h
     src/core/app.h
@@ -20,15 +20,15 @@ set(SOURCES
     src/main.cpp
     src/utils/config.cpp
     src/utils/hardware_sync.cpp
-    src/ui/overlay_core.cpp
-    src/ui/overlay_ui.cpp
-    src/ui/overlay_logic.cpp
+    src/ui/overlay/overlay_core.cpp
+    src/ui/overlay/overlay_ui.cpp
+    src/ui/overlay/overlay_logic.cpp
     src/ui/preferences.cpp
     src/ui/preferences_ui.cpp
     src/ui/screen_selector.cpp
     src/core/app.cpp
-    src/core/key_mapper.cpp
-    src/core/key_mapper_data.cpp
+    src/core/key_mapper/key_mapper.cpp
+    src/core/key_mapper/key_mapper_data.cpp
     src/core/input/input_manager.cpp
     src/core/input/input_x11.cpp
     src/core/input/input_wayland.cpp
