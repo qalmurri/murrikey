@@ -6,6 +6,8 @@
 
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
+#include <QElapsedTimer>
+#include <array>
 
 class InputX11Backend : public InputBackend {
 public:
@@ -15,12 +17,14 @@ public:
     void poll() override;
 
 private:
-    bool shouldRepeat(int key);
-    QString mapKey(int keycode, KeySym sym, bool shift, bool caps);
+    bool shouldRepeat(int key, bool isPressed);
+    QString mapKey(int keycode, bool shift, bool caps);
 
     Display* display = nullptr;
-    char old_keys[32]{};
-    int repeatTimers[256]{};
+    std::array<char, 32> oldKeys{};
+    std::array<int, 256> repeatCounters{};
+    std::array<QElapsedTimer, 256> lastPressTime{};
+    std::array<KeySym, 256> cachedKeySyms{};
     KeyboardConfig sysConfig;
 };
 

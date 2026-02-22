@@ -6,10 +6,8 @@
 class InputBackend {
 public:
     virtual ~InputBackend() = default;
-
     virtual void poll() = 0;
 
-    // callback hook (disambungkan ke InputManager)
     std::function<void(
         const QString& key,
         bool ctrl,

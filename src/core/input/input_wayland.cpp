@@ -2,7 +2,5 @@
 
 class InputWaylandBackend : public InputBackend {
 public:
-    void poll() override {
-        // TODO: wl_keyboard listener
-    }
+    void poll() override {}
 };

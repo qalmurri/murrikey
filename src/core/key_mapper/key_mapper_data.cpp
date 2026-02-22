@@ -1,53 +1,78 @@
 #include "key_mapper.h"
 #include <X11/keysym.h>
+#include <X11/Xlib.h>
+
+QMap<unsigned long, KeyMapper::KeyEntry> KeyMapper::keyCache;
+QMap<QString, QString> KeyMapper::specialCharMap;
+QSet<unsigned long> KeyMapper::modifiers;
 
 void KeyMapper::loadCache() {
-    symbolCache[XK_space]     = " ";
-    symbolCache[XK_Return]    = "⏎";
-    symbolCache[XK_BackSpace] = "⌫";
-    symbolCache[XK_Tab]       = "⇥";
-    symbolCache[XK_Escape]    = "⎋";
-    symbolCache[XK_Delete]    = "⌦";
-    symbolCache[XK_Home]      = "⤒";
-    symbolCache[XK_End]       = "⤓";
-    symbolCache[XK_Page_Up]   = "⇞";
-    symbolCache[XK_Page_Down] = "⇟";
+    if (!keyCache.isEmpty()) return;
 
-    symbolCache[XK_Left]      = "←";
-    symbolCache[XK_Right]     = "→";
-    symbolCache[XK_Up]        = "↑";
-    symbolCache[XK_Down]      = "↓";
+    modifiers = {XK_Control_L, XK_Control_R,
+                 XK_Shift_L, XK_Shift_R,
+                 XK_Alt_L, XK_Alt_R,
+                 XK_Super_L};
 
-    symbolCache[XK_KP_Insert]   = "Ins";
-    symbolCache[XK_KP_End]      = "End";
-    symbolCache[XK_KP_Down]     = "↓";
-    symbolCache[XK_KP_Page_Down]= "PgDn";
-    symbolCache[XK_KP_Left]     = "←";
-    symbolCache[XK_KP_Begin]    = "5";
-    symbolCache[XK_KP_Right]    = "→";
-    symbolCache[XK_KP_Home]     = "Home";
-    symbolCache[XK_KP_Up]       = "↑";
-    symbolCache[XK_KP_Page_Up]  = "PgUp";
-    symbolCache[XK_KP_Delete]   = "Del";
-    symbolCache[XK_KP_Enter]    = "⏎";
-    symbolCache[XK_KP_Add]      = "+";
-    symbolCache[XK_KP_Subtract] = "-";
-    symbolCache[XK_KP_Multiply] = "×";
-    symbolCache[XK_KP_Divide]   = "÷";
+    keyCache[XK_space]     = {" ", " "};
+    keyCache[XK_Return]    = {"⏎", "⏎"};
+    keyCache[XK_BackSpace] = {"⌫", "⌫"};
+    keyCache[XK_Tab]       = {"⇥", "⇥"};
+    keyCache[XK_Escape]    = {"⎋", "⎋"};
+    keyCache[XK_Delete]    = {"⌦", "."};
+    keyCache[XK_Home]      = {"⤒", "7"};
+    keyCache[XK_End]       = {"⤓", "1"};
+    keyCache[XK_Page_Up]   = {"⇞", "9"};
+    keyCache[XK_Page_Down] = {"⇟", "3"};
 
-    numlockCache[XK_KP_Insert]   = "0";
-    numlockCache[XK_KP_End]      = "1";
-    numlockCache[XK_KP_Down]     = "2";
-    numlockCache[XK_KP_Page_Down]= "3";
-    numlockCache[XK_KP_Left]     = "4";
-    numlockCache[XK_KP_Begin]    = "5";
-    numlockCache[XK_KP_Right]    = "6";
-    numlockCache[XK_KP_Home]     = "7";
-    numlockCache[XK_KP_Up]       = "8";
-    numlockCache[XK_KP_Page_Up]  = "9";
-    numlockCache[XK_KP_Delete]   = ".";
+    keyCache[XK_Left]      = {"←", "4"};
+    keyCache[XK_Right]     = {"→", "6"};
+    keyCache[XK_Up]        = {"↑", "8"};
+    keyCache[XK_Down]      = {"↓", "2"};
 
-    symbolCache[XK_F1]  = "F1";
-    symbolCache[XK_Print] = "⎙";
-    symbolCache[XK_Pause] = "Ⅱ";
+    keyCache[XK_KP_Insert]   = {"Ins", "0"};
+    keyCache[XK_KP_End]      = {"End", "1"};
+    keyCache[XK_KP_Down]     = {"↓", "2"};
+    keyCache[XK_KP_Page_Down]= {"PgDn", "3"};
+    keyCache[XK_KP_Left]     = {"←", "4"};
+    keyCache[XK_KP_Begin]    = {"5", "5"};
+    keyCache[XK_KP_Right]    = {"→", "6"};
+    keyCache[XK_KP_Home]     = {"Home", "7"};
+    keyCache[XK_KP_Up]       = {"↑", "8"};
+    keyCache[XK_KP_Page_Up]  = {"PgUp", "9"};
+    keyCache[XK_KP_Delete]   = {"Del", "."};
+    keyCache[XK_KP_Enter]    = {"⏎", "⏎"};
+    keyCache[XK_KP_Add]      = {"+", "+"};
+    keyCache[XK_KP_Subtract] = {"-", "-"};
+    keyCache[XK_KP_Multiply] = {"×", "×"};
+    keyCache[XK_KP_Divide]   = {"÷", "÷"};
+
+    keyCache[XK_F1]  = {"F1", "F1"};
+    keyCache[XK_Print] = {"⎙", "⎙"};
+    keyCache[XK_Pause] = {"Ⅱ", "Ⅱ"};
+
+    keyCache[XK_exclam]      = {"!", "!"};
+    keyCache[XK_at]          = {"@", "@"};
+    keyCache[XK_numbersign]  = {"#", "#"};
+    keyCache[XK_dollar]      = {"$", "$"};
+    keyCache[XK_percent]     = {"%", "%"};
+    keyCache[XK_asciicircum] = {"^", "^"};
+    keyCache[XK_ampersand]   = {"&", "&"};
+    keyCache[XK_asterisk]    = {"*", "*"};
+    keyCache[XK_parenleft]   = {"(", "("};
+    keyCache[XK_parenright]  = {")", ")"};
+    keyCache[XK_underscore]  = {"_", "_"};
+    keyCache[XK_plus]        = {"+", "+"};
+
+    specialCharMap["bracketleft"]  = "[";
+    specialCharMap["bracketright"] = "]";
+    specialCharMap["semicolon"]    = ";";
+    specialCharMap["apostrophe"]   = "'";
+    specialCharMap["comma"]        = ",";
+    specialCharMap["period"]       = ".";
+    specialCharMap["slash"]        = "/";
+    specialCharMap["backslash"]    = "\\";
+    specialCharMap["minus"]        = "-";
+    specialCharMap["equal"]        = "=";
+    specialCharMap["grave"]        = "`";
 }

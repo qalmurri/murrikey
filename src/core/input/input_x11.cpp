@@ -1,14 +1,19 @@
 #include "input_x11.h"
-#include "../utils/hardware_sync.h"
 #include "key_mapper/key_mapper.h"
-
+#include "../utils/hardware_sync.h"
 #include <cstring>
+#include <X11/keysym.h>
 
 InputX11Backend::InputX11Backend() {
     display = XOpenDisplay(nullptr);
-    memset(old_keys, 0, sizeof(old_keys));
-    memset(repeatTimers, 0, sizeof(repeatTimers));
+    memset(oldKeys.data(), 0, oldKeys.size());
+    memset(repeatCounters.data(), 0, repeatCounters.size());
+
     sysConfig = HardwareSync::getKeyboardSettings(display, 10);
+
+    for (int i = 0; i < 256; ++i) {
+        cachedKeySyms[i] = XkbKeycodeToKeysym(display, i, 0, 0);
+    }
 }
 
 InputX11Backend::~InputX11Backend() {
@@ -30,41 +35,46 @@ void InputX11Backend::poll() {
     bool alt   = state.mods & Mod1Mask;
     bool caps  = state.mods & LockMask;
 
-    for (int i = 8; i < 256; i++) {
-        bool isPressed = keys[i / 8] & (1 << (i % 8));
-        bool wasPressed = old_keys[i / 8] & (1 << (i % 8));
+    for (int keycode = 8; keycode < 256; ++keycode) {
+        bool isPressed = keys[keycode / 8] & (1 << (keycode % 8));
+        bool wasPressed = oldKeys[keycode / 8] & (1 << (keycode % 8));
 
         if (!isPressed) {
-            repeatTimers[i] = 0;
+            repeatCounters[keycode] = 0;
             continue;
         }
 
-        KeySym sym = XkbKeycodeToKeysym(display, i, 0, 0);
+        KeySym sym = cachedKeySyms[keycode];
         if (KeyMapper::isModifier(sym)) continue;
 
-        if (!wasPressed || shouldRepeat(i)) {
-            QString key = mapKey(i, sym, shift, caps);
-            if (!key.isEmpty() && onKey) {
-                onKey(key, ctrl, shift, alt);
-            }
+        if (!wasPressed || shouldRepeat(keycode, isPressed)) {
+            QString keyStr = mapKey(keycode, shift, caps);
+            if (!keyStr.isEmpty() && onKey)
+                onKey(keyStr, ctrl, shift, alt);
         }
     }
 
-    memcpy(old_keys, keys, sizeof(old_keys));
+    memcpy(oldKeys.data(), keys, sizeof(keys));
 }
 
-bool InputX11Backend::shouldRepeat(int key) {
-    repeatTimers[key]++;
-    if (repeatTimers[key] == sysConfig.delayThreshold)
+bool InputX11Backend::shouldRepeat(int key, bool /*isPressed*/) {
+    repeatCounters[key]++;
+    if (repeatCounters[key] == sysConfig.delayThreshold)
         return true;
-    if (repeatTimers[key] > sysConfig.delayThreshold)
-        return (repeatTimers[key] - sysConfig.delayThreshold)
+    if (repeatCounters[key] > sysConfig.delayThreshold)
+        return (repeatCounters[key] - sysConfig.delayThreshold)
                % sysConfig.rateThreshold == 0;
     return false;
 }
 
-QString InputX11Backend::mapKey(int keycode, KeySym sym, bool shift, bool caps) {
-    unsigned long mapped =
-        XkbKeycodeToKeysym(display, keycode, 0, (shift ^ caps) ? 1 : 0);
-    return KeyMapper::map(mapped, false);
+QString InputX11Backend::mapKey(int keycode, bool shift, bool caps) {
+    KeySym sym;
+
+    if (caps && XK_A <= cachedKeySyms[keycode] && cachedKeySyms[keycode] <= XK_Z) {
+        sym = XkbKeycodeToKeysym(display, keycode, 0, 1);
+    } else {
+        sym = XkbKeycodeToKeysym(display, keycode, 0, shift ? 1 : 0);
+    }
+
+    return KeyMapper::map(sym, false);
 }

@@ -3,6 +3,8 @@
 
 #include <QString>
 #include <QMap>
+#include <QSet>
+#include <QPair>
 
 class KeyMapper {
 public:
@@ -11,8 +13,14 @@ public:
     static void loadCache();
 
 private:
-    static QMap<unsigned long, QString> symbolCache;
-    static QMap<unsigned long, QString> numlockCache;
+    struct KeyEntry {
+        QString normal;
+        QString numlock;
+    };
+
+    static QMap<unsigned long, KeyEntry> keyCache;
+    static QMap<QString, QString> specialCharMap;
+    static QSet<unsigned long> modifiers;
 };
 
 #endif

@@ -13,7 +13,7 @@ InputManager::InputManager(QObject* parent)
 
     };
     currentMode = Config::instance().load("input_mode", 0).toInt();
-}  // ← PASTIKAN KURUNG INI ADA
+}
 
 InputManager::~InputManager() = default;
 

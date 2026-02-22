@@ -9,7 +9,7 @@ class InputManager : public QObject {
     Q_OBJECT
 public:
     explicit InputManager(QObject* parent = nullptr);
-    ~InputManager();   // ← WAJIB ADA
+    ~InputManager();
 
     void check();
     void setMode(int mode);
