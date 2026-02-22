@@ -5,13 +5,12 @@
 #include <QLabel>
 #include <QSlider>
 #include <QComboBox>
-#include <QLineEdit>
 #include <QSpinBox>
 #include <QPushButton>
-#include <QVariant>       // WAJIB ADA
-#include <QStyleOption>    // UNTUK FIX QStyleOptionFrame / QStyleOptionButton
-#include <QStyle> // Tambahkan ini
-                  //
+#include <QVariant>
+#include <QStyleOption>
+#include <QStyle>
+
 class PreferencesWindow : public QDialog {
     Q_OBJECT
 
@@ -29,10 +28,9 @@ private:
     void updatePreview();
 
     QLabel* previewLabel;
-    QSlider *ySlider, *durationSlider;
+    QSlider *durationSlider; // ySlider dihapus
     QLabel *durationLabel;
-    QComboBox *backspaceCombo, *modeCombo;
-    QLineEdit *mappingInput;
+    QComboBox *modeCombo;    // backspaceCombo dihapus
     QSpinBox *smartFormatSpin;
     QPushButton *colorBtn, *fontBtn, *selectAreaBtn;
 

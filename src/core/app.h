@@ -1,5 +1,5 @@
-#ifndef MURRIKEY_APP_H
-#define MURRIKEY_APP_H
+#ifndef APP_H
+#define APP_H
 
 #include <QObject>
 #include <QSystemTrayIcon>
@@ -8,11 +8,11 @@
 #include "preferences.h"
 #include "input_manager.h"
 
-class MurrikeyApp : public QObject {
+class App : public QObject {
     Q_OBJECT
 
 public:
-    explicit MurrikeyApp(QObject *parent = nullptr);
+    explicit App(QObject *parent = nullptr);
     void start();
 
 private:

@@ -1,23 +1,19 @@
-#include "murrikey_app.h"
+#include "app.h"
 #include "config.h"
 #include <QMenu>
 #include <QStyle>
 #include <QApplication>
 #include <QMessageBox>
 
-MurrikeyApp::MurrikeyApp(QObject *parent) : QObject(parent) {
+App::App(QObject *parent) : QObject(parent) {
     setupConnections();
     setupTray();
 }
 
-void MurrikeyApp::setupConnections() {
+void App::setupConnections() {
     connect(&input, &InputManager::keyPressed, this, [this](QString name, bool ctrl, bool shift, bool alt) {
-        int bsMode = Config::instance().load("backspace_mode", 0).toInt();
-        if ((name == "BackSpace" || name == "⌫") && bsMode == 1) {
-            overlay.removeLastChar();
-        } else {
-            overlay.handleKeyPress(name, ctrl, shift, alt);
-        }
+        // Logika Backspace Behavior dihapus, langsung lempar ke overlay
+        overlay.handleKeyPress(name, ctrl, shift, alt);
     });
 
     connect(&prefs, &PreferencesWindow::configChanged, &overlay, &ScreenkeyOverlay::refresh);
@@ -28,7 +24,7 @@ void MurrikeyApp::setupConnections() {
     connect(&inputTimer, &QTimer::timeout, &input, &InputManager::check);
 }
 
-void MurrikeyApp::setupTray() {
+void App::setupTray() {
     tray = new QSystemTrayIcon(qApp->style()->standardIcon(QStyle::SP_ComputerIcon), this);
     QMenu* menu = new QMenu();
 
@@ -46,7 +42,7 @@ void MurrikeyApp::setupTray() {
     tray->show();
 }
 
-void MurrikeyApp::start() {
+void App::start() {
     inputTimer.start(10);
     overlay.show();
 }

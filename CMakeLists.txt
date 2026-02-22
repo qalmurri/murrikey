@@ -13,7 +13,7 @@ set(HEADERS
     src/ui/screen_selector.h
     src/core/key_mapper.h
     src/core/input_manager.h
-    src/core/murrikey_app.h
+    src/core/app.h
 )
 set(SOURCES
     src/main.cpp
@@ -25,7 +25,7 @@ set(SOURCES
     src/ui/preferences.cpp
     src/ui/preferences_ui.cpp
     src/ui/screen_selector.cpp
-    src/core/murrikey_app.cpp
+    src/core/app.cpp
     src/core/key_mapper.cpp
     src/core/key_mapper_data.cpp
     src/core/input_manager.cpp

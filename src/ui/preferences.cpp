@@ -3,12 +3,9 @@
 #include "screen_selector.h"
 #include <QColorDialog>
 #include <QFontDialog>
-#include <QJsonDocument>
-#include <QJsonObject>
 
 PreferencesWindow::PreferencesWindow() {
     setWindowTitle("Murrikey Settings");
-    
     initWidgets();      
     setupLayout();      
     loadSettings();     
@@ -17,12 +14,9 @@ PreferencesWindow::PreferencesWindow() {
 }
 
 void PreferencesWindow::loadSettings() {
-    ySlider->setValue(Config::instance().load("y_offset", 100).toInt());
     durationSlider->setValue(Config::instance().load("hide_duration", 3000).toInt());
     durationLabel->setText(QString("%1 ms").arg(durationSlider->value()));
-    backspaceCombo->setCurrentIndex(Config::instance().load("backspace_mode", 0).toInt());
     modeCombo->setCurrentIndex(Config::instance().load("input_mode", 0).toInt());
-    mappingInput->setText(Config::instance().load("custom_mapping", "{}").toString());
     smartFormatSpin->setValue(Config::instance().load("smart_format_threshold", 2).toInt());
 }
 
@@ -51,8 +45,10 @@ void PreferencesWindow::setupConnections() {
         if (ok) { Config::instance().save("font_family", f.family()); emit configChanged(); }
     });
 
-    connect(ySlider, &QSlider::valueChanged, this, [this](int v) {
-        Config::instance().save("y_offset", v); emit configChanged();
+    connect(durationSlider, &QSlider::valueChanged, this, [this](int v) {
+        Config::instance().save("hide_duration", v);
+        durationLabel->setText(QString("%1 ms").arg(v));
+        emit configChanged();
     });
 
     connect(smartFormatSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](int v) {
