@@ -6,7 +6,7 @@
 #include <QTimer>
 #include "overlay.h"
 #include "preferences.h"
-#include "input_manager.h"
+#include "input/input_manager.h"
 
 class App : public QObject {
     Q_OBJECT

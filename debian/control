@@ -1,0 +1,18 @@
+Source: murrikey
+Section: utils
+Priority: optional
+Maintainer: qalmurri <blog.qalmurri@gmail.com>
+Build-Depends:
+ cmake,
+ debhelper-compat (= 13),
+ libx11-dev,
+ libxkbcommon-dev,
+ qtbase5-dev
+Standards-Version: 4.6.2
+Homepage: https://github.com/qalmurri/murrikey
+
+Package: murrikey
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Keyboard overlay and input visualizer
+ A lightweight keyboard input overlay for Linux (X11/Wayland).

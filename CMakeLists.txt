@@ -12,7 +12,8 @@ set(HEADERS
     src/ui/preferences.h
     src/ui/screen_selector.h
     src/core/key_mapper.h
-    src/core/input_manager.h
+    src/core/input/input_manager.h
+    src/core/input/input_backend.h
     src/core/app.h
 )
 set(SOURCES
@@ -28,8 +29,9 @@ set(SOURCES
     src/core/app.cpp
     src/core/key_mapper.cpp
     src/core/key_mapper_data.cpp
-    src/core/input_manager.cpp
-    src/core/input_x11.cpp
+    src/core/input/input_manager.cpp
+    src/core/input/input_x11.cpp
+    src/core/input/input_wayland.cpp
 )
 add_executable(murrikey ${SOURCES} ${HEADERS})
 target_link_libraries(murrikey Qt6::Widgets X11)
