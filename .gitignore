@@ -19,5 +19,7 @@ murrikey
 .DS_Store
 .cache
 .cache/
+.assets/
+.debian/
 # Konfigurasi lokal (agar tidak bentrok dengan orang lain)
 *.conf
